@@ -55,6 +55,9 @@ body {
   align-items: center;
   padding: 24px 12px;
   gap: 20px;
+  padding-bottom: calc(
+    24px + env(safe-area-inset-bottom, 0px)
+  ); /* Safe-area padding to prevent bottom overlap on iOS */
 }
 
 @media (min-width: 768px) {
@@ -205,12 +208,24 @@ body {
   justify-content: center;
   align-items: center;
   gap: 10px;
-  flex-wrap: nowrap; /* prevent vertical wrapping */
+  flex-wrap: wrap; /* allow wrapping when needed */
 }
 
 @media (max-width: 480px) {
   .actions .button {
     width: auto !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .actions .button {
+    width: 100% !important; /* full-width buttons on mobile */
   }
 }
 
@@ -450,6 +465,50 @@ a:hover {
 .button.cta-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Brand utilities for compact cards/sections */
+.brand-block {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: var(--pad);
+}
+
+.brand-accent {
+  color: var(--accent);
+}
+
+/* Success page styling aligned with app branding */
+.success {
+  display: grid;
+  gap: var(--gap);
+  text-align: left;
+}
+
+.success-title {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.success-text {
+  display: grid;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.success-footer {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.success-footer .muted {
+  color: var(--muted);
 }
 
 @media (prefers-color-scheme: light) {
