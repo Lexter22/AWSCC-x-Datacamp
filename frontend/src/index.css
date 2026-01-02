@@ -1,0 +1,468 @@
+:root {
+  --bg-1: #0f1512;
+  --bg-2: #0b120e;
+  --text: #eaf3ed;
+  --muted: #cfe2d7;
+  --accent: #03ef62;
+
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.12);
+
+  --radius: 14px;
+  --pad: 18px;
+  --gap: 14px;
+
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    "Helvetica Neue", Arial;
+  overflow-x: hidden;
+}
+
+/* Layout */
+.app-shell {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 12px;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .app-shell {
+    padding: 40px 16px;
+  }
+}
+
+.page {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* Card container */
+.glass-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 980px; /* widen for better horizontal space */
+  padding: var(--pad);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Utility: span full width across the grid */
+.full-row {
+  grid-column: 1 / -1;
+}
+
+/* Larger textarea variant for long answers like motivation */
+.textarea.large {
+  min-height: 280px;
+}
+
+/* Smaller textarea variant for compact sections */
+.textarea.small {
+  min-height: 140px; /* compact height for learning questions */
+}
+
+/* Ensure grid columns distribute evenly and allow full-row utility */
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+@media (min-width: 720px) {
+  .section-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.helper {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Form controls */
+.form {
+  display: grid;
+  gap: var(--gap);
+}
+
+.label {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.input,
+.textarea,
+.button {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  font-size: 16px;
+  min-height: 48px; /* increased for better tap targets */
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: rgba(234, 243, 237, 0.66);
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: rgba(3, 239, 98, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.textarea {
+  min-height: 200px; /* maximize for better writing */
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.button {
+  cursor: pointer;
+  font-weight: 600;
+  background: linear-gradient(
+    135deg,
+    rgba(3, 239, 98, 0.2),
+    rgba(3, 239, 98, 0.35)
+  );
+  border: 1px solid rgba(3, 239, 98, 0.5);
+  color: var(--text);
+}
+
+.button:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(3, 239, 98, 0.28),
+    rgba(3, 239, 98, 0.42)
+  );
+}
+
+.button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Compact button size */
+.button.btn-sm {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+/* Optional: ensure consistent width without being large */
+.button.btn-sm.minw {
+  min-width: 110px;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  flex-direction: row; /* horizontal alignment */
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap; /* prevent vertical wrapping */
+}
+
+@media (max-width: 480px) {
+  .actions .button {
+    width: auto !important;
+  }
+}
+
+/* Prevent full-width buttons; keep compact horizontal layout */
+.actions .button {
+  width: auto;
+}
+
+/* Icon button style */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.05s ease;
+}
+
+.icon-button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(3, 239, 98, 0.6);
+  transform: translateY(-1px);
+}
+
+.icon-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.icon-button svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* Stepper & progress (minimalist) */
+.stepper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 8px 0 8px;
+}
+
+.stepper-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.stepper-item.active {
+  border-color: rgba(3, 239, 98, 0.6);
+  background: rgba(3, 239, 98, 0.12);
+}
+
+.progress {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  margin: 6px 0 14px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(
+    90deg,
+    rgba(3, 239, 98, 0.85),
+    rgba(3, 239, 98, 0.4)
+  );
+  transition: width 220ms ease;
+}
+
+/* Notice block */
+.notice {
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.notice-title {
+  font-weight: 700;
+  margin: 0 0 6px 0;
+}
+
+.notice-text {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Links */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Radio group styling */
+.radio-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Home container styles */
+.home-container {
+  max-width: 760px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--gap);
+  text-align: left; /* left-align all homepage text */
+}
+
+.home-hero {
+  margin: 6px 0 2px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.home-subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.home {
+  max-width: 760px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--gap);
+  text-align: left;
+}
+
+.home-header {
+  display: grid;
+  gap: 6px;
+}
+
+.home-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.home-section {
+  margin-top: 6px;
+}
+
+.feature-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.checkbox-row .checkbox {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  accent-color: var(--accent);
+}
+
+.consent-note {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* CTA bar and compact primary button */
+.cta-bar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.button.cta-primary {
+  min-height: 40px;
+  padding: 10px 16px;
+  font-size: 15px;
+  border-radius: 10px;
+  background: linear-gradient(
+    135deg,
+    rgba(3, 239, 98, 0.22),
+    rgba(3, 239, 98, 0.38)
+  );
+  border: 1px solid rgba(3, 239, 98, 0.55);
+  color: var(--text);
+}
+
+.button.cta-primary:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(3, 239, 98, 0.3),
+    rgba(3, 239, 98, 0.45)
+  );
+}
+
+.button.cta-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+}

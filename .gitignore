@@ -1,0 +1,55 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Environment secrets (frontend + backend)
+.env
+.env.*
+**/.env
+**/.env.*
+# Keep example envs tracked
+!.env.example
+!**/.env.example
+!*.env.example
+!**/*.env.example
+
+# Deployment/service dirs that may store tokens
+.vercel/
+.netlify/
+.supabase/
+
+# Private key materials
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+
+# Additional caches/build dirs
+.cache/
+coverage/
+tmp/
+temp/
+.vite/
+.next/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
