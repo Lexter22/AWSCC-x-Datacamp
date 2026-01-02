@@ -3,12 +3,12 @@ const app = require("./src/server");
 const START_PORT = Number(process.env.PORT || 4000);
 
 function start(port, retries = 5) {
-  const server = app.listen(port, () => {
+  const server = app.listen(port, "0.0.0.0", () => {
     console.log(`Backend listening on :${port}`);
   });
 
   server.on("error", (err) => {
-    if (err.code === "EADDRINUSE" && retries > 0) {
+    if (err.code === "EADDRINUSE" && retries > 0 && !process.env.RENDER) {
       const nextPort = port + 1;
       console.warn(`Port ${port} in use, trying ${nextPort}...`);
       setTimeout(() => start(nextPort, retries - 1), 200);
