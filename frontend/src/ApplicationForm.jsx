@@ -63,20 +63,6 @@ export default function ApplicationForm() {
     return () => clearTimeout(t);
   }, [glowBackBtn]);
 
-  // NEW: global green background for html/body (mobile-safe)
-  useEffect(() => {
-    const green = "#22c55e";
-    const html = document.documentElement;
-    const body = document.body;
-    html.style.backgroundColor = green;
-    body.style.backgroundColor = green;
-    // Mobile-safe viewport height
-    body.style.minHeight = "100dvh";
-    // Avoid default margins showing black/gray gaps
-    body.style.margin = "0";
-    // no cleanup to keep green across screens as requested
-  }, []);
-
   const progressPct = Math.round(((step + 1) / 3) * 100);
 
   function handleChange(e) {
@@ -476,551 +462,536 @@ export default function ApplicationForm() {
     );
   }
 
-  // NEW: page wrapper style to guarantee full-height green container
-  const pageStyle = {
-    minHeight: "100dvh", // dynamic viewport height on mobile
-    backgroundColor: "#22c55e",
-    backgroundImage: "none",
-  };
-
   return !hasConsent ? (
-    // NEW: wrap consent screen in full-viewport green container
-    <div style={pageStyle}>
-      <form className="form" onSubmit={(e) => e.preventDefault()} noValidate>
+    // Render consent screen directly (no green wrapper)
+    <form className="form" onSubmit={(e) => e.preventDefault()} noValidate>
+      <fieldset
+        className="section"
+        role="group"
+        aria-labelledby="legend-consent"
+      >
+        <legend id="legend-consent" className="legend">
+          Consent
+        </legend>
+        <div className="section-grid">
+          <div className="full-row">
+            <div className="label">Please read and confirm</div>
+            <div className="helper">
+              By proceeding, you consent to the collection and use of your
+              application data by AWS Cloud Club × DataCamp for review and
+              program administration. We may contact you via the email you
+              provide regarding your application and related opportunities. Your
+              data will be handled per our privacy policy and deleted or
+              anonymized when no longer needed. You affirm the information you
+              provide is accurate and agree to our terms.
+            </div>
+          </div>
+          <label className="checkbox-row">
+            <input
+              className="checkbox"
+              type="checkbox"
+              checked={consentChecked}
+              onChange={(e) => setConsentChecked(e.target.checked)}
+              aria-checked={consentChecked}
+              aria-label="I have read and agree to the consent statement"
+            />
+            <span>I have read and agree to the above consent.</span>
+          </label>
+        </div>
+      </fieldset>
+      <div className="actions">
+        {/* CHANGED: Use Back instead of Home on consent screen */}
+        <button type="button" className="button btn-sm minw" onClick={back}>
+          Back
+        </button>
+        <button
+          type="button"
+          className="button btn-sm minw"
+          onClick={() => {
+            sessionStorage.setItem("consent", "true");
+            setHasConsent(true);
+          }}
+          disabled={!consentChecked}
+          aria-disabled={!consentChecked}
+        >
+          Continue
+        </button>
+      </div>
+    </form>
+  ) : (
+    // Render main form directly (no green wrapper)
+    <form className="form" onSubmit={(e) => e.preventDefault()} noValidate>
+      <div className="stepper" aria-label="Progress">
+        <div className={`stepper-item ${step === 0 ? "active" : ""}`}>
+          Personal
+        </div>
+        <div className={`stepper-item ${step === 1 ? "active" : ""}`}>
+          Learning
+        </div>
+        <div className={`stepper-item ${step === 2 ? "active" : ""}`}>Tech</div>
+      </div>
+
+      {/* Keep transparent track, show only green progress bar */}
+      <div
+        aria-hidden="true"
+        style={{
+          height: 6,
+          background: "transparent",
+          boxShadow: "none",
+          border: "none",
+          margin: "8px 0 16px",
+        }}
+      >
+        <div
+          style={{
+            width: `${progressPct}%`,
+            height: "100%",
+            backgroundColor: "#22c55e", // green
+            borderRadius: 9999,
+            transition: "width 200ms ease",
+          }}
+        />
+      </div>
+
+      {/* step 0 */}
+      {step === 0 && (
         <fieldset
           className="section"
           role="group"
-          aria-labelledby="legend-consent"
+          aria-labelledby="legend-personal"
         >
-          <legend id="legend-consent" className="legend">
-            Consent
+          <legend id="legend-personal" className="legend">
+            Personal Details
           </legend>
           <div className="section-grid">
-            <div className="full-row">
-              <div className="label">Please read and confirm</div>
+            <div>
+              <div className="label">Full Name</div>
+              <input
+                ref={firstFieldRef}
+                className="input"
+                type="text"
+                name="full_name"
+                placeholder="Your full name"
+                value={form.full_name}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.full_name}
+              />
+              {/* CHANGED: use ErrorMsg */}
+              {fieldErrors.full_name && (
+                <ErrorMsg id="err-full_name" msg={fieldErrors.full_name} />
+              )}
+            </div>
+
+            <div>
+              <div className="label">Email</div>
+              <input
+                className="input"
+                type="email"
+                name="email"
+                placeholder="you@example.com"
+                value={form.email}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.email}
+              />
+              {/* CHANGED */}
+              {fieldErrors.email && <ErrorMsg msg={fieldErrors.email} />}
+            </div>
+
+            <div>
+              <div className="label">Location</div>
+              <input
+                className="input"
+                type="text"
+                name="location"
+                placeholder="City, Country"
+                value={form.location}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.location}
+              />
+              {/* CHANGED: use ErrorMsg for red "Required" */}
+              {fieldErrors.location && <ErrorMsg msg={fieldErrors.location} />}
+            </div>
+
+            <div>
+              <div className="label">University</div>
+              <input
+                className="input"
+                type="text"
+                name="university"
+                placeholder="Your university"
+                value={form.university}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.university}
+              />
+              {/* CHANGED: use ErrorMsg for red "Required" */}
+              {fieldErrors.university && (
+                <ErrorMsg msg={fieldErrors.university} />
+              )}
+            </div>
+
+            <div>
+              <div className="label">Year Level</div>
+              <input
+                className="input"
+                type="text"
+                name="year_level"
+                placeholder="e.g., First Year, Sophomore, Senior, Graduate"
+                value={form.year_level}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.year_level}
+              />
+              {/* CHANGED */}
+              {fieldErrors.year_level && (
+                <ErrorMsg msg={fieldErrors.year_level} />
+              )}
               <div className="helper">
-                By proceeding, you consent to the collection and use of your
-                application data by AWS Cloud Club × DataCamp for review and
-                program administration. We may contact you via the email you
-                provide regarding your application and related opportunities.
-                Your data will be handled per our privacy policy and deleted or
-                anonymized when no longer needed. You affirm the information you
-                provide is accurate and agree to our terms.
+                Use the term common at your university.
               </div>
             </div>
-            <label className="checkbox-row">
+
+            {/* NEW: Age */}
+            <div>
+              <div className="label">Age</div>
               <input
-                className="checkbox"
-                type="checkbox"
-                checked={consentChecked}
-                onChange={(e) => setConsentChecked(e.target.checked)}
-                aria-checked={consentChecked}
-                aria-label="I have read and agree to the consent statement"
+                className="input"
+                type="number"
+                name="age"
+                placeholder="e.g., 21"
+                min="10"
+                max="100"
+                step="1"
+                value={form.age}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.age}
               />
-              <span>I have read and agree to the above consent.</span>
-            </label>
+              {/* CHANGED */}
+              {fieldErrors.age && <ErrorMsg msg={fieldErrors.age} />}
+            </div>
+
+            {/* NEW: Facebook profile link (required) */}
+            <div className="full-row">
+              <div className="label">Facebook Profile Link</div>
+              <input
+                className="input"
+                type="url"
+                name="facebook_link"
+                placeholder="https://facebook.com/your.profile"
+                value={form.facebook_link}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.facebook_link}
+              />
+              {/* CHANGED */}
+              {fieldErrors.facebook_link && (
+                <ErrorMsg msg={fieldErrors.facebook_link} />
+              )}
+              <div className="helper">
+                Required. Helps us contact you about your application.
+              </div>
+            </div>
+
+            {/* NEW: Share post link (required, friendly text) */}
+            <div className="full-row">
+              <div className="label">
+                Kindly share your FB post link and make sure its public
+              </div>
+              <input
+                className="input"
+                type="url"
+                name="social_share_link"
+                placeholder="Link to your FB post announcing applications are open"
+                value={form.social_share_link}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.social_share_link}
+              />
+              {/* CHANGED */}
+              {fieldErrors.social_share_link && (
+                <ErrorMsg msg={fieldErrors.social_share_link} />
+              )}
+              <div className="helper">
+                Required. Paste the URL of your post letting friends know this
+                opportunity is open.
+              </div>
+            </div>
+
+            {/* Moved: Gender (optional) now below FB links */}
+            <div>
+              <div className="label">Gender (optional)</div>
+              <select
+                className="input"
+                name="gender"
+                value={form.gender}
+                onChange={handleChange}
+                aria-invalid={!!fieldErrors.gender}
+              >
+                <option value="prefer_not_to_say">Prefer not to say</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="nonbinary">Non-binary</option>
+                <option value="other">Other</option>
+              </select>
+              {/* CHANGED */}
+              {fieldErrors.gender && <ErrorMsg msg={fieldErrors.gender} />}
+            </div>
           </div>
         </fieldset>
-        <div className="actions">
-          {/* CHANGED: Use Back instead of Home on consent screen */}
-          <button type="button" className="button btn-sm minw" onClick={back}>
-            Back
-          </button>
-          <button
-            type="button"
-            className="button btn-sm minw"
-            onClick={() => {
-              sessionStorage.setItem("consent", "true");
-              setHasConsent(true);
-            }}
-            disabled={!consentChecked}
-            aria-disabled={!consentChecked}
-          >
-            Continue
-          </button>
-        </div>
-      </form>
-    </div>
-  ) : (
-    // NEW: wrap main form in full-viewport green container
-    <div style={pageStyle}>
-      <form className="form" onSubmit={(e) => e.preventDefault()} noValidate>
-        <div className="stepper" aria-label="Progress">
-          <div className={`stepper-item ${step === 0 ? "active" : ""}`}>
-            Personal
-          </div>
-          <div className={`stepper-item ${step === 1 ? "active" : ""}`}>
-            Learning
-          </div>
-          <div className={`stepper-item ${step === 2 ? "active" : ""}`}>
-            Tech
-          </div>
-        </div>
-        {/* CHANGED: progress bar without dark track remains */}
-        <div
-          aria-hidden="true"
-          style={{
-            height: 6,
-            background: "transparent",
-            boxShadow: "none",
-            border: "none",
-            margin: "8px 0 16px",
-          }}
+      )}
+
+      {/* step 1 */}
+      {step === 1 && (
+        <fieldset
+          className="section"
+          role="group"
+          aria-labelledby="legend-learning"
         >
-          <div
-            style={{
-              width: `${progressPct}%`,
-              height: "100%",
-              backgroundColor: "#22c55e",
-              borderRadius: 9999,
-              transition: "width 200ms ease",
-            }}
-          />
-        </div>
+          <legend id="legend-learning" className="legend">
+            Learning Details
+          </legend>
 
-        {/* step 0 */}
-        {step === 0 && (
-          <fieldset
-            className="section"
-            role="group"
-            aria-labelledby="legend-personal"
-          >
-            <legend id="legend-personal" className="legend">
-              Personal Details
-            </legend>
-            <div className="section-grid">
-              <div>
-                <div className="label">Full Name</div>
-                <input
-                  ref={firstFieldRef}
-                  className="input"
-                  type="text"
-                  name="full_name"
-                  placeholder="Your full name"
-                  value={form.full_name}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.full_name}
-                />
-                {/* CHANGED: use ErrorMsg */}
-                {fieldErrors.full_name && (
-                  <ErrorMsg id="err-full_name" msg={fieldErrors.full_name} />
-                )}
-              </div>
-
-              <div>
-                <div className="label">Email</div>
-                <input
-                  className="input"
-                  type="email"
-                  name="email"
-                  placeholder="you@example.com"
-                  value={form.email}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.email}
-                />
-                {/* CHANGED */}
-                {fieldErrors.email && <ErrorMsg msg={fieldErrors.email} />}
-              </div>
-
-              <div>
-                <div className="label">Location</div>
-                <input
-                  className="input"
-                  type="text"
-                  name="location"
-                  placeholder="City, Country"
-                  value={form.location}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.location}
-                />
-                {/* CHANGED: use ErrorMsg for red "Required" */}
-                {fieldErrors.location && (
-                  <ErrorMsg msg={fieldErrors.location} />
-                )}
-              </div>
-
-              <div>
-                <div className="label">University</div>
-                <input
-                  className="input"
-                  type="text"
-                  name="university"
-                  placeholder="Your university"
-                  value={form.university}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.university}
-                />
-                {/* CHANGED: use ErrorMsg for red "Required" */}
-                {fieldErrors.university && (
-                  <ErrorMsg msg={fieldErrors.university} />
-                )}
-              </div>
-
-              <div>
-                <div className="label">Year Level</div>
-                <input
-                  className="input"
-                  type="text"
-                  name="year_level"
-                  placeholder="e.g., First Year, Sophomore, Senior, Graduate"
-                  value={form.year_level}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.year_level}
-                />
-                {/* CHANGED */}
-                {fieldErrors.year_level && (
-                  <ErrorMsg msg={fieldErrors.year_level} />
-                )}
-                <div className="helper">
-                  Use the term common at your university.
-                </div>
-              </div>
-
-              {/* NEW: Age */}
-              <div>
-                <div className="label">Age</div>
-                <input
-                  className="input"
-                  type="number"
-                  name="age"
-                  placeholder="e.g., 21"
-                  min="10"
-                  max="100"
-                  step="1"
-                  value={form.age}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.age}
-                />
-                {/* CHANGED */}
-                {fieldErrors.age && <ErrorMsg msg={fieldErrors.age} />}
-              </div>
-
-              {/* NEW: Facebook profile link (required) */}
-              <div className="full-row">
-                <div className="label">Facebook Profile Link</div>
-                <input
-                  className="input"
-                  type="url"
-                  name="facebook_link"
-                  placeholder="https://facebook.com/your.profile"
-                  value={form.facebook_link}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.facebook_link}
-                />
-                {/* CHANGED */}
-                {fieldErrors.facebook_link && (
-                  <ErrorMsg msg={fieldErrors.facebook_link} />
-                )}
-                <div className="helper">
-                  Required. Helps us contact you about your application.
-                </div>
-              </div>
-
-              {/* NEW: Share post link (required, friendly text) */}
-              <div className="full-row">
-                <div className="label">
-                  Kindly share your FB post link and make sure its public
-                </div>
-                <input
-                  className="input"
-                  type="url"
-                  name="social_share_link"
-                  placeholder="Link to your FB post announcing applications are open"
-                  value={form.social_share_link}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.social_share_link}
-                />
-                {/* CHANGED */}
-                {fieldErrors.social_share_link && (
-                  <ErrorMsg msg={fieldErrors.social_share_link} />
-                )}
-                <div className="helper">
-                  Required. Paste the URL of your post letting friends know this
-                  opportunity is open.
-                </div>
-              </div>
-
-              {/* Moved: Gender (optional) now below FB links */}
-              <div>
-                <div className="label">Gender (optional)</div>
-                <select
-                  className="input"
-                  name="gender"
-                  value={form.gender}
-                  onChange={handleChange}
-                  aria-invalid={!!fieldErrors.gender}
-                >
-                  <option value="prefer_not_to_say">Prefer not to say</option>
-                  <option value="female">Female</option>
-                  <option value="male">Male</option>
-                  <option value="nonbinary">Non-binary</option>
-                  <option value="other">Other</option>
-                </select>
-                {/* CHANGED */}
-                {fieldErrors.gender && <ErrorMsg msg={fieldErrors.gender} />}
+          {/* NEW: Informational banner about importance of answers */}
+          <div className="section-grid">
+            <div className="full-row">
+              <div className="helper">
+                Your responses are important to determine scholarship
+                eligibility. Please answer thoughtfully and with enough detail.
               </div>
             </div>
-          </fieldset>
-        )}
 
-        {/* step 1 */}
-        {step === 1 && (
-          <fieldset
-            className="section"
-            role="group"
-            aria-labelledby="legend-learning"
-          >
-            <legend id="legend-learning" className="legend">
-              Learning Details
-            </legend>
-
-            {/* NEW: Informational banner about importance of answers */}
-            <div className="section-grid">
-              <div className="full-row">
-                <div className="helper">
-                  Your responses are important to determine scholarship
-                  eligibility. Please answer thoughtfully and with enough
-                  detail.
-                </div>
-              </div>
-
-              <div className="full-row">
-                <div className="label">Motivation</div>
-                <textarea
-                  ref={firstFieldRef}
-                  className="textarea small"
-                  name="motivation"
-                  placeholder="Why are you applying?"
-                  value={form.motivation}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.motivation}
-                />
-                {/* CHANGED */}
-                {fieldErrors.motivation && (
-                  <ErrorMsg id="err-motivation" msg={fieldErrors.motivation} />
-                )}
-                {/* NEW: Helper tip */}
-                <div className="helper">
-                  Tip: Aim for 10+ characters; thoughtful detail helps us
-                  evaluate eligibility.
-                </div>
-              </div>
-
-              <div className="full-row">
-                <div className="label">What are you hoping to learn?</div>
-                <textarea
-                  className="textarea small"
-                  name="learning_hopes"
-                  placeholder="Topics, skills, or tools you want to learn."
-                  value={form.learning_hopes}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.learning_hopes}
-                />
-                {/* CHANGED */}
-                {fieldErrors.learning_hopes && (
-                  <ErrorMsg msg={fieldErrors.learning_hopes} />
-                )}
-                {/* NEW: Helper tip */}
-                <div className="helper">
-                  Tip: Be specific; detailed answers guide matching and review.
-                </div>
-              </div>
-
-              <div className="full-row">
-                <div className="label">What is your goal?</div>
-                <textarea
-                  className="textarea small"
-                  name="goal"
-                  placeholder="Describe your short-term and long-term goals."
-                  value={form.goal}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.goal}
-                />
-                {/* CHANGED */}
-                {fieldErrors.goal && <ErrorMsg msg={fieldErrors.goal} />}
-                {/* NEW: Helper tip */}
-                <div className="helper">
-                  Tip: Share both short-term and long-term goals to help us
-                  understand fit.
-                </div>
+            <div className="full-row">
+              <div className="label">Motivation</div>
+              <textarea
+                ref={firstFieldRef}
+                className="textarea small"
+                name="motivation"
+                placeholder="Why are you applying?"
+                value={form.motivation}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.motivation}
+              />
+              {/* CHANGED */}
+              {fieldErrors.motivation && (
+                <ErrorMsg id="err-motivation" msg={fieldErrors.motivation} />
+              )}
+              {/* NEW: Helper tip */}
+              <div className="helper">
+                Tip: Aim for 10+ characters; thoughtful detail helps us evaluate
+                eligibility.
               </div>
             </div>
-          </fieldset>
-        )}
 
-        {/* step 2 */}
-        {step === 2 && (
-          <fieldset
-            className="section"
-            role="group"
-            aria-labelledby="legend-tech"
-          >
-            <legend id="legend-tech" className="legend">
-              Tech & Commitment
-            </legend>
-            <div className="section-grid">
-              <div>
-                <div className="label">Device for DataCamp</div>
-                <input
-                  ref={firstFieldRef}
-                  className="input"
-                  type="text"
-                  name="device"
-                  placeholder="Laptop, Desktop, Tablet, Mobile"
-                  value={form.device}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.device}
-                />
-                {/* CHANGED */}
-                {fieldErrors.device && (
-                  <ErrorMsg id="err-device" msg={fieldErrors.device} />
-                )}
+            <div className="full-row">
+              <div className="label">What are you hoping to learn?</div>
+              <textarea
+                className="textarea small"
+                name="learning_hopes"
+                placeholder="Topics, skills, or tools you want to learn."
+                value={form.learning_hopes}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.learning_hopes}
+              />
+              {/* CHANGED */}
+              {fieldErrors.learning_hopes && (
+                <ErrorMsg msg={fieldErrors.learning_hopes} />
+              )}
+              {/* NEW: Helper tip */}
+              <div className="helper">
+                Tip: Be specific; detailed answers guide matching and review.
               </div>
+            </div>
 
-              <div>
-                <div className="label">Hours you can commit per week</div>
-                <input
-                  className="input"
-                  type="number"
-                  name="commitment_hours"
-                  placeholder="e.g., 5"
-                  min="0"
-                  max="168"
-                  step="1"
-                  value={form.commitment_hours}
-                  onChange={handleChange}
-                  required
-                  aria-invalid={!!fieldErrors.commitment_hours}
-                />
-                {/* CHANGED */}
-                {fieldErrors.commitment_hours && (
-                  <ErrorMsg msg={fieldErrors.commitment_hours} />
-                )}
-                <div className="helper">
-                  Typical learners commit 3–10 hours weekly.
-                </div>
+            <div className="full-row">
+              <div className="label">What is your goal?</div>
+              <textarea
+                className="textarea small"
+                name="goal"
+                placeholder="Describe your short-term and long-term goals."
+                value={form.goal}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.goal}
+              />
+              {/* CHANGED */}
+              {fieldErrors.goal && <ErrorMsg msg={fieldErrors.goal} />}
+              {/* NEW: Helper tip */}
+              <div className="helper">
+                Tip: Share both short-term and long-term goals to help us
+                understand fit.
               </div>
+            </div>
+          </div>
+        </fieldset>
+      )}
 
-              <div style={{ gridColumn: "1 / -1" }}>
-                <div className="label">Internet Connection</div>
-                <div
-                  className="radio-group"
-                  role="radiogroup"
-                  aria-label="Internet Connection"
-                >
-                  <label className="radio-option">
-                    <input
-                      type="radio"
-                      name="internet_type"
-                      value="wifi"
-                      checked={form.internet_type === "wifi"}
-                      onChange={handleChange}
-                    />
-                    <span>Wi‑Fi</span>
-                  </label>
-                  <label className="radio-option">
-                    <input
-                      type="radio"
-                      name="internet_type"
-                      value="mobile_data"
-                      checked={form.internet_type === "mobile_data"}
-                      onChange={handleChange}
-                    />
-                    <span>Mobile Data</span>
-                  </label>
-                </div>
-                {/* CHANGED */}
-                {fieldErrors.internet_type && (
-                  <ErrorMsg msg={fieldErrors.internet_type} />
-                )}
+      {/* step 2 */}
+      {step === 2 && (
+        <fieldset
+          className="section"
+          role="group"
+          aria-labelledby="legend-tech"
+        >
+          <legend id="legend-tech" className="legend">
+            Tech & Commitment
+          </legend>
+          <div className="section-grid">
+            <div>
+              <div className="label">Device for DataCamp</div>
+              <input
+                ref={firstFieldRef}
+                className="input"
+                type="text"
+                name="device"
+                placeholder="Laptop, Desktop, Tablet, Mobile"
+                value={form.device}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.device}
+              />
+              {/* CHANGED */}
+              {fieldErrors.device && (
+                <ErrorMsg id="err-device" msg={fieldErrors.device} />
+              )}
+            </div>
+
+            <div>
+              <div className="label">Hours you can commit per week</div>
+              <input
+                className="input"
+                type="number"
+                name="commitment_hours"
+                placeholder="e.g., 5"
+                min="0"
+                max="168"
+                step="1"
+                value={form.commitment_hours}
+                onChange={handleChange}
+                required
+                aria-invalid={!!fieldErrors.commitment_hours}
+              />
+              {/* CHANGED */}
+              {fieldErrors.commitment_hours && (
+                <ErrorMsg msg={fieldErrors.commitment_hours} />
+              )}
+              <div className="helper">
+                Typical learners commit 3–10 hours weekly.
               </div>
+            </div>
 
-              {/* NEW: Friendly submission acknowledgement */}
-              <div className="full-row">
-                <label className="checkbox-row">
+            <div style={{ gridColumn: "1 / -1" }}>
+              <div className="label">Internet Connection</div>
+              <div
+                className="radio-group"
+                role="radiogroup"
+                aria-label="Internet Connection"
+              >
+                <label className="radio-option">
                   <input
-                    className="checkbox"
-                    type="checkbox"
-                    checked={submissionConsent}
-                    onChange={(e) => setSubmissionConsent(e.target.checked)}
-                    aria-checked={submissionConsent}
-                    aria-label="Submission acknowledgement"
+                    type="radio"
+                    name="internet_type"
+                    value="wifi"
+                    checked={form.internet_type === "wifi"}
+                    onChange={handleChange}
                   />
-                  <span>
-                    By submitting, I acknowledge that acceptance isn’t
-                    guaranteed. I confirm my answers are accurate and understand
-                    they’re important to determine eligibility.
-                  </span>
+                  <span>Wi‑Fi</span>
+                </label>
+                <label className="radio-option">
+                  <input
+                    type="radio"
+                    name="internet_type"
+                    value="mobile_data"
+                    checked={form.internet_type === "mobile_data"}
+                    onChange={handleChange}
+                  />
+                  <span>Mobile Data</span>
                 </label>
               </div>
+              {/* CHANGED */}
+              {fieldErrors.internet_type && (
+                <ErrorMsg msg={fieldErrors.internet_type} />
+              )}
             </div>
-          </fieldset>
-        )}
 
-        {/* CHANGED: make error message stand out on validation failure */}
-        {error && (
-          <div
-            className="error"
-            // CHANGED: use red styling for prominent error; remove glow
-            style={
-              validationError
-                ? {
-                    background: "rgba(239, 68, 68, 0.12)", // red-500 tint
-                    border: "1px solid #ef4444", // red-500
-                    color: "#ef4444",
-                    padding: "12px 14px",
-                    borderRadius: "8px",
-                  }
-                : undefined
-            }
-          >
-            {error}
+            {/* NEW: Friendly submission acknowledgement */}
+            <div className="full-row">
+              <label className="checkbox-row">
+                <input
+                  className="checkbox"
+                  type="checkbox"
+                  checked={submissionConsent}
+                  onChange={(e) => setSubmissionConsent(e.target.checked)}
+                  aria-checked={submissionConsent}
+                  aria-label="Submission acknowledgement"
+                />
+                <span>
+                  By submitting, I acknowledge that acceptance isn’t guaranteed.
+                  I confirm my answers are accurate and understand they’re
+                  important to determine eligibility.
+                </span>
+              </label>
+            </div>
           </div>
-        )}
+        </fieldset>
+      )}
 
-        <div className="actions">
-          <button
-            type="button"
-            className="button btn-sm minw"
-            onClick={back}
-            disabled={submitting}
-            // Glow cue when validation fails
-            style={
-              glowBackBtn
-                ? {
-                    boxShadow: "0 0 12px rgba(0, 230, 195, 0.7)",
-                    borderColor: "#00e6c3",
-                  }
-                : undefined
-            }
-          >
-            Back
-          </button>
-
-          <button
-            type="button"
-            className="button btn-sm minw"
-            onClick={next}
-            // NEW: disable Submit until acknowledgement is checked on final step
-            disabled={submitting || (step === 2 && !submissionConsent)}
-            aria-disabled={submitting || (step === 2 && !submissionConsent)}
-          >
-            {step < 2 ? "Next" : submitting ? "Submitting…" : "Submit"}
-          </button>
+      {/* CHANGED: make error message stand out on validation failure */}
+      {error && (
+        <div
+          className="error"
+          // CHANGED: use red styling for prominent error; remove glow
+          style={
+            validationError
+              ? {
+                  background: "rgba(239, 68, 68, 0.12)", // red-500 tint
+                  border: "1px solid #ef4444", // red-500
+                  color: "#ef4444",
+                  padding: "12px 14px",
+                  borderRadius: "8px",
+                }
+              : undefined
+          }
+        >
+          {error}
         </div>
-      </form>
-    </div>
+      )}
+
+      <div className="actions">
+        <button
+          type="button"
+          className="button btn-sm minw"
+          onClick={back}
+          disabled={submitting}
+          // Glow cue when validation fails
+          style={
+            glowBackBtn
+              ? {
+                  boxShadow: "0 0 12px rgba(0, 230, 195, 0.7)",
+                  borderColor: "#00e6c3",
+                }
+              : undefined
+          }
+        >
+          Back
+        </button>
+
+        <button
+          type="button"
+          className="button btn-sm minw"
+          onClick={next}
+          // NEW: disable Submit until acknowledgement is checked on final step
+          disabled={submitting || (step === 2 && !submissionConsent)}
+          aria-disabled={submitting || (step === 2 && !submissionConsent)}
+        >
+          {step < 2 ? "Next" : submitting ? "Submitting…" : "Submit"}
+        </button>
+      </div>
+    </form>
   );
 }
