@@ -1,8 +1,345 @@
+/* =========================================
+   1. GLOBAL RESET & "NUCLEAR" LAYOUT SAFETY
+   ========================================= */
+:root {
+  /* Brand Variables */
+  --brand-green: #22c55e;
+  --brand-green-600: #16a34a;
+  --brand-green-700: #15803d;
+
+  /* Theme Colors */
+  --text: #e6f2ea;
+  --muted: #9fb9aa;
+  --border: rgba(255, 255, 255, 0.12);
+  --surface: rgba(255, 255, 255, 0.04);
+  --bg: radial-gradient(
+      1200px circle at 12% 8%,
+      #07271a 0%,
+      #0a3a27 35%,
+      #0c2f22 65%,
+      #081713 100%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(34, 197, 94, 0.12) 0%,
+      rgba(21, 128, 61, 0.08) 40%,
+      rgba(16, 94, 44, 0.06) 100%
+    );
+
+  /* Spacing */
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+
+  /* Form Elements */
+  --field-bg: rgba(255, 255, 255, 0.06);
+}
+
+/* THE FIX: Prevent horizontal scroll & padding calculation errors */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* CRITICAL FIX: Stop the white bar on the right */
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
+  width: 100%;
+}
+
+/* =========================================
+   2. FORM LAYOUT & CONTAINERS
+   ========================================= */
+.form,
+.page,
+.success {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(16px, 5vw, 24px);
+  display: grid;
+  gap: clamp(var(--space-2), 4vw, var(--space-4));
+}
+
+@media (min-width: 1024px) {
+  .form,
+  .page,
+  .success {
+    max-width: 880px;
+  }
+}
+
+/* Safe area for mobile */
+@supports (padding: max(0px)) {
+  .form {
+    padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* =========================================
+   3. SECTIONS & CARDS
+   ========================================= */
+.section {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: clamp(var(--space-2), 5vw, var(--space-4));
+
+  /* CRITICAL FIX: Allows grid items to shrink below their content size */
+  min-width: 0;
+  width: 100%;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 12px 0 0 12px;
+  background: var(--brand-green);
+  opacity: 0.85;
+}
+
+.section p {
+  margin: 0 0 var(--space-2);
+  line-height: 1.7;
+}
+
+.legend {
+  margin: 0 0 var(--space-2);
+  font-weight: 600;
+  font-size: clamp(18px, 2.6vw, 22px);
+  color: var(--brand-green);
+  text-shadow: 0 0 6px rgba(34, 197, 94, 0.35), 0 0 14px rgba(34, 197, 94, 0.25);
+}
+
+.legend:hover {
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.55), 0 0 18px rgba(34, 197, 94, 0.35);
+}
+
+.section-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(var(--space-2), 3vw, var(--space-3));
+  width: 100%;
+}
+
+.section-grid .full-row {
+  grid-column: 1 / -1;
+}
+
+/* =========================================
+   4. INPUTS & CONTROLS
+   ========================================= */
+.input,
+.textarea,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--field-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  min-height: 44px;
+  line-height: 1.2;
+}
+
+.textarea.small {
+  min-height: 96px;
+  /* CRITICAL FIX: Prevent dragging textarea wider than screen */
+  resize: vertical;
+}
+
+.input:focus,
+.textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--brand-green-600);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+}
+
+.label {
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+  display: block;
+}
+
+.helper {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-top: var(--space-1);
+}
+
+.error {
+  margin-top: 6px;
+  font-size: 0.95rem;
+}
+
+/* Checkbox & Radio */
+.checkbox {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--brand-green-600);
+  cursor: pointer;
+}
+
+.checkbox-row {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 12px;
+  align-items: start;
+  cursor: pointer;
+}
+
+.radio-group {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.radio-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.radio-option input {
+  accent-color: var(--brand-green-600);
+}
+
+/* =========================================
+   5. BUTTONS & ACTIONS
+   ========================================= */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .actions {
+    grid-template-columns: auto auto;
+    justify-content: end;
+  }
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: var(--brand-green);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease, transform 80ms ease;
+}
+
+.button:hover {
+  background: var(--brand-green-600);
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button[disabled],
+.button[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button.glow {
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.45), 0 0 18px rgba(34, 197, 94, 0.3);
+  border-color: var(--brand-green-600);
+}
+
+.button.glow:hover {
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.6), 0 0 22px rgba(34, 197, 94, 0.4);
+}
+
+.button.glow[disabled],
+.button.glow[aria-disabled="true"] {
+  opacity: 0.9; /* keep glow visible even when disabled */
+}
+
+.btn-sm {
+  padding: 10px 14px;
+}
+
+.minw {
+  min-width: 120px;
+}
+
+/* =========================================
+   6. SUCCESS PAGE
+   ========================================= */
+.success .brand-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: clamp(16px, 5vw, 24px);
+}
+
+.brand-accent {
+  color: var(--brand-green-700);
+}
+
+.success-footer {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-top: 12px;
+}
+
+.success-footer a {
+  color: var(--brand-green-700);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* =========================================
+   7. UTILITIES & LOGOS
+   ========================================= */
+a {
+  color: var(--brand-green);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--brand-green-600);
 }
 
 .logo {
@@ -11,9 +348,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -31,12 +370,4 @@
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }

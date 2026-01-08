@@ -1,87 +1,107 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Home() {
   const navigate = useNavigate();
-  const [consent, setConsent] = useState(false);
-
-  function proceed() {
-    if (!consent) return;
-    // Persist consent for route guard
-    sessionStorage.setItem("consent", "true");
-    // Also set common alternative keys to avoid null/undefined on insert
-    sessionStorage.setItem("consented", "true");
-    sessionStorage.setItem("hasConsent", "true");
-    // Pass consent via URL and router state for the Apply page to consume
-    navigate("/apply?consent=true", { state: { consent: true } });
-  }
+  const [consentChecked, setConsentChecked] = useState(false);
 
   return (
     <div className="page">
-      <div className="home">
-        {/* NEW: About section */}
-        <section
-          className="section home-section"
-          aria-labelledby="legend-about"
-        >
+      {/* Main Content Card (No Hero Header) */}
+      <div className="section">
+        {/* About Section */}
+        <div style={{ marginBottom: "24px" }}>
+          <h2 className="legend">About the Program</h2>
           <p>
-            AWS Cloud Club - Frizz is a student-led community that helps
-            learners explore cloud, data, and AI through hands-on activities and
-            mentorship. Through this partnership with DataCamp Donates, we aim
-            to provide structured learning paths, projects, and certifications
-            to accelerate your journey into Data and Artificial Intelligence.
+            We are a student-led community helping learners explore cloud, data,
+            and AI through hands-on activities and mentorship—powered by
+            DataCamp Donates.
           </p>
           <p>
-            Why is it free? This initiative is offered as a scholarship program
-            to broaden access to high-quality learning resources—supported by
-            community partners and educational grants—so motivated learners can
-            focus on developing skills without financial barriers.
+            Scholarships provide <strong>free premium access</strong> to curated
+            tracks, projects, and professional certificates so you can build
+            skills without financial barriers.
           </p>
-          <p>
-            Why DataCamp? DataCamp’s interactive courses, assessments, and
-            curated tracks help you learn Python, SQL, ML, and more with
-            practical exercises. Projects and certificates make it easy to
-            showcase progress and readiness for internships and roles in data
-            and AI.
-          </p>
-        </section>
+          <div className="helper">
+            Curious? Learn more at{" "}
+            <a
+              href="https://www.datacamp.com/donates"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              DataCamp’s official page
+            </a>
+            .
+          </div>
+        </div>
 
-        <section
-          className="section home-section"
-          aria-labelledby="legend-consent"
-        >
-          <h2 id="legend-consent" className="legend">
-            Consent
-          </h2>
-          <p style={{ marginTop: 0 }}>
-            By proceeding, you consent to the collection and use of your
-            application data by AWS Cloud Club Frizz x DataCamp Donates for
-            review and program administration. We may contact you via the email
-            you provide regarding your application and related opportunities.
-            Your data will be handled per our privacy policy and deleted or
-            anonymized when no longer needed.
-          </p>
-          <label className="checkbox-row">
+        {/* Visual Divider */}
+        <div
+          style={{
+            height: "1px",
+            background: "var(--border)",
+            margin: "24px 0",
+          }}
+        />
+
+        {/* Consent Section */}
+        <div>
+          <h2 className="legend">Consent & Application</h2>
+          <div className="helper" style={{ marginBottom: "16px" }}>
+            By proceeding, you consent to the collection of your application
+            data by AWS Cloud Club Frizz × DataCamp Donates for review. We may
+            contact you via email regarding this opportunity. Your data is
+            handled according to our privacy policy and deleted when no longer
+            needed.
+          </div>
+
+          {/* Interactive Consent Box */}
+          <label
+            className="checkbox-row"
+            style={{
+              background: consentChecked
+                ? "rgba(34, 197, 94, 0.1)"
+                : "var(--field-bg)",
+              border: consentChecked
+                ? "1px solid var(--brand-green)"
+                : "1px solid var(--border)",
+              padding: "16px",
+              borderRadius: "10px",
+              transition: "all 0.2s ease",
+            }}
+          >
             <input
               className="checkbox"
               type="checkbox"
-              checked={consent}
-              onChange={(e) => setConsent(e.target.checked)}
-              aria-checked={consent}
+              checked={consentChecked}
+              onChange={(e) => setConsentChecked(e.target.checked)}
             />
-            <span>I have read and agree to the above consent.</span>
+            <span
+              style={{
+                fontWeight: "500",
+                color: consentChecked ? "#fff" : "var(--text)",
+              }}
+            >
+              I have read and agree to the consent statement.
+            </span>
           </label>
-        </section>
+        </div>
 
-        <div className="cta-bar">
+        {/* CTA Button */}
+        <div style={{ marginTop: "24px" }}>
           <button
             type="button"
-            className="button cta-primary"
-            onClick={proceed}
-            disabled={!consent}
-            aria-disabled={!consent}
+            className="button"
+            onClick={() => navigate("/apply")}
+            disabled={!consentChecked}
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              padding: "14px",
+              fontSize: "1.05rem",
+            }}
           >
-            Apply Now!
+            Start Application
           </button>
         </div>
       </div>
